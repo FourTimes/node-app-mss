@@ -70,6 +70,8 @@ create the project in sonarqube
     password: admin
 ```
 
+    Please modify the parameters in sonar-project.js file
+
 ```sh
     npm run sonar || node sonar-project.js
 ```
