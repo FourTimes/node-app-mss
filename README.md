@@ -30,6 +30,8 @@ dependencies
 command
 
 ```sh
+    sudo usermod -aG docker $USER
+    reboot
     docker build -t jenkins-docker-sonar -f jenkins-docker-sonar-dockerfile .
     sudo mkdir -p /var/jenkins_home
     sudo chown -R 1000:1000 /var/jenkins_home
