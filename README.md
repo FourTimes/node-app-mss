@@ -1,5 +1,12 @@
 # nodejs-app-mss
 
+node installtion
+```sh
+    # Using Ubuntu
+    curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+```
+
 Clone the projects
 
 ```sh
@@ -60,7 +67,7 @@ Dependencies
 
 ```
 
-create the project in sonarqube
+create the project using the credentials in sonarqube
 
 ```sh
     open the browser
