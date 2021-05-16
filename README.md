@@ -45,7 +45,13 @@ start the sonarqube service
 ```sh
     docker-compose up -d
 ```
-
+create the sonar project
+-----------
+   
+    #=> open the browser => jenkins-server-ip:9000
+    #=> go to project
+       
+-----------
 
 create the jenkins project
 -----------
