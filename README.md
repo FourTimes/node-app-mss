@@ -3,7 +3,7 @@
 Clone the projects
 
 ```sh
-    git clone https://github.com/MithunTechnologiesDevOps/nodejs-app-mss.git
+    git clone https://github.com/FourTimes/node-app-mss.git
     cd nodejs-app-mss
 ```
 Install the packages
