@@ -33,9 +33,9 @@ test case test
 
 To Execute the SonarQube Repor, execute the below command.
 
-Dependencies
+Dependencies - vim docker-compose.yml
 
-```Dockerfile
+```docker-compose
 
     version: '2'
     services:
@@ -66,6 +66,7 @@ Dependencies
     jenkins:
 
 ```
+    docker-compose up -d
 
 create the project using the credentials in sonarqube
 
@@ -75,6 +76,8 @@ create the project using the credentials in sonarqube
     username: admin
     password: admin
 ```
+
+    Please modify the parameters in sonar-project.js file
 
 ```sh
     npm run sonar || node sonar-project.js
@@ -100,7 +103,7 @@ In package.json add below entry,
 
 ```json
 "publishConfig": {
-    "registry": "http://Ipaddress:9981/repository/nodejs-mithuntechnologies/"
+    "registry": "http://Ipaddress:9981/FourTmes/node-app-mss/"
 }
 ```
 
