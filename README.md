@@ -1,114 +1,54 @@
-# nodejs-app-mss
+Jenkins CICD 
+---------
 
-node installtion
+Install the jenkins server using this dockerfile
+
+    vim Dockerfile-jenkins-docker-sonar
+
+```yml
+    FROM jenkins/jenkins
+    USER root
+    RUN apt update && apt install unzip  wget curl -y -qq
+    RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    RUN chmod +x kubectl && mv kubectl /usr/local/bin
+    RUN curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator
+    RUN chmod +x aws-iam-authenticator && mv aws-iam-authenticator /usr/local/bin
+    RUN mkdir -p /tmp/download 
+    RUN curl -L https://download.docker.com/linux/static/stable/x86_64/docker-19.03.9.tgz | tar -xz -C /tmp/download 
+    RUN rm -rf /tmp/download/docker/dockerd 
+    RUN mv /tmp/download/docker/docker* /usr/local/bin/ && rm -rf /tmp/download && groupadd -g 999 docker && usermod -aG docker jenkins
+    RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip
+    RUN unzip sonar-scanner-cli-4.2.0.1873-linux.zip && rm -rf sonar-scanner-cli-4.2.0.1873-linux.zip
+    RUN mv sonar-scanner-4.2.0.1873-linux /opt/sonar-scanner
+    ENV PATH=$PATH:/opt/sonar-scanner/bin
+    USER jenkins
+```
+dependencies
+
+    1. docker service needed
+
+command
+
 ```sh
-    # Using Ubuntu
-    curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+    docker build -t jenkins-docker-sonar -f jenkins-docker-sonar-dockerfile .
+    sudo mkdir -p /var/jenkins_home
+    sudo chown -R 1000:1000 /var/jenkins_home
+    docker run -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock --name jds jenkins-docker-sonar
+    docker logs jds #=> find the one-time-password
 ```
+---------
 
-Clone the projects
+start the sonarqube service
 
 ```sh
-    git clone https://github.com/FourTimes/node-app-mss.git
-    cd nodejs-app-mss
-```
-Install the packages
-
-```sh
-    npm install
-```
-
-Start the node application
-
-```sh
-    node app.js || npm start
-```
-
-test case test
-
-```sh
-    npm test
-```
-
-To Execute the SonarQube Repor, execute the below command.
-
-Dependencies - vim docker-compose.yml
-
-```docker-compose
-
-    version: '2'
-    services:
-    postgres:
-        image: postgres:9.6
-        networks:
-        - jenkins
-        environment:
-        POSTGRES_USER: admin
-        POSTGRES_PASSWORD: admin
-        volumes:
-        - /var/postgres-data:/var/lib/postgresql/data
-    sonarqube:
-        image: sonarqube
-        ports:
-        - "9000:9000"
-        - "9092:9092"
-        networks:
-        - jenkins
-        environment:
-        SONARQUBE_JDBC_USERNAME: admin
-        SONARQUBE_JDBC_PASSWORD: admin
-        SONARQUBE_JDBC_URL: "jdbc:postgresql://postgres:5432/sonar"
-        depends_on: 
-        - postgres
-
-    networks:
-    jenkins:
-
-```
     docker-compose up -d
-
-create the project using the credentials in sonarqube
-
-```sh
-    open the browser
-    localhost:9000
-    username: admin
-    password: admin
-```
-
-    Please modify the parameters in sonar-project.js file
-
-```sh
-    npm run sonar || node sonar-project.js
 ```
 
 
-Generate the Nexus token by using base64 encoding as follows.
+create the jenkins project
+-----------
+   
+    #=> open the browser => jenkins-server-ip:8080
+    #=> go to project => pipeline   
+-----------
 
-```sh
-    echo -n 'admin:passw0rd' | openssl base64
-```
-    
-Create a .npmrc file in your project root directory and add below lines.
-
-```sh
-    registry=<<NexusRepoURL>>
-    _auth=<<Token>>
-    email=<<EmailID>>
-    always-auth=true
-```
-
-In package.json add below entry,
-
-```json
-"publishConfig": {
-    "registry": "http://Ipaddress:9981/FourTmes/node-app-mss/"
-}
-```
-
-Execute below command to upload packages to nexus repo.
-
-```sh
-    npm publish
-```
